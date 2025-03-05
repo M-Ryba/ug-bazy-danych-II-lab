@@ -75,7 +75,7 @@ const deleteProduct = (req, res) => {
   }
 
   const deletedProduct = products[productIndex];
-  products = products.filter((p) => p.id !== id);
+  products.splice(productIndex, 1);
 
   res.status(200).json({
     message: "Product deleted successfully",
