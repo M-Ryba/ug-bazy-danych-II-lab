@@ -10,7 +10,7 @@ function getProductById(req, res) {
   const id = parseInt(req.params.id);
   const product = products.find((p) => p.id === id);
 
-  if (product) {
+  if (!product) {
     res.status(404).json({ message: "Product not found" });
   } else {
     res.status(200).json(product);
