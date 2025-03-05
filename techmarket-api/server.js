@@ -20,6 +20,10 @@ app.use(errorMiddleware);
 app.use("/api/products", productRoutes);
 
 app.get("/", (req, res) => {
+  res.send("Please use /api route");
+});
+
+app.get("/api", (req, res) => {
   res.send("You are using TechMarket API");
 });
 

@@ -6,7 +6,7 @@ function getAllProducts(req, res) {
 }
 
 // Pobieranie produktu o podanym id
-function getProductById(req, req) {
+function getProductById(req, res) {
   const id = parseInt(req.params.id);
   const product = products.find((p) => p.id === id);
 
