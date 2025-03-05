@@ -21,8 +21,10 @@ function getProductById(req, res) {
 function createProduct(req, res) {
   const newProduct = req.body;
 
-  if (!newProduct.name || !newProduct.price) {
-    return res.status(400).json({ message: "Name or price not specified!" });
+  if (!newProduct.name || !newProduct.price || !newProduct.category) {
+    return res
+      .status(400)
+      .json({ message: "Name, price or category not specified!" });
   }
 
   // Nowe ID (największe ID + 1)
