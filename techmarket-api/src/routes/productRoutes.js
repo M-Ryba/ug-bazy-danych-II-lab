@@ -14,6 +14,9 @@ router.post("/", productController.createProduct);
 // PUT /api/products/:id - update product
 router.put("/:id", productController.updateProduct);
 
+// PATCH /api/products/:id - partially update product
+router.patch("/:id", productController.patchProduct);
+
 // DELETE /api/products/:id - delete product
 router.delete("/:id", productController.deleteProduct);
 
