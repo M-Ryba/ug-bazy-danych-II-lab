@@ -42,7 +42,7 @@ function createProduct(req, res) {
   });
 }
 
-// Aktualizacja produktu
+// Aktualizacja produktu (całość)
 const updateProduct = (req, res) => {
   const id = parseInt(req.params.id);
   const updatedProduct = req.body;
@@ -51,7 +51,8 @@ const updateProduct = (req, res) => {
 
   // Sprawdzenie czy produkt o podanym ID istnieje
   if (productIndex !== -1) {
-    updatedProduct.id = id;
+    // Ingorowanie id podanego w JSON body
+    updatedProduct.id = products[productIndex].id;
     products[productIndex] = updatedProduct;
 
     res.status(200).json({
