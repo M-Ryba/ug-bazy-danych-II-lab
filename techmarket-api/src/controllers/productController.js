@@ -17,7 +17,7 @@ function getProductById(req, res) {
   }
 }
 
-// Tworzenie produktu
+// Create product
 function createProduct(req, res, next) {
   try {
     const newProduct = req.body;
