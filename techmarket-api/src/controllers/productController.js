@@ -18,28 +18,38 @@ function getProductById(req, res) {
 }
 
 // Tworzenie produktu
-function createProduct(req, res) {
-  const newProduct = req.body;
+function createProduct(req, res, next) {
+  try {
+    const newProduct = req.body;
 
-  if (!newProduct.name || !newProduct.price || !newProduct.category) {
-    return res
-      .status(400)
-      .json({ message: "Name, price or category not specified!" });
+    if (!newProduct.name || !newProduct.price || !newProduct.category) {
+      res
+        .status(400)
+        .json({ message: "Name, price or category not specified!" });
+      const error = new Error("Name, price or category not specified!");
+      error.name = "ValidationError";
+      throw error;
+    }
+
+    // New ID (biggest ID + 1)
+    const maxId = products.reduce(
+      (max, product) => Math.max(max, product.id),
+      0
+    );
+    newProduct.id = maxId + 1;
+
+    // Creation date
+    newProduct.createdAt = new Date().toISOString();
+
+    products.push(newProduct);
+
+    res.status(201).json({
+      message: "Product added successfully",
+      product: newProduct,
+    });
+  } catch (error) {
+    next(error);
   }
-
-  // New ID (biggest ID + 1)
-  const maxId = products.reduce((max, product) => Math.max(max, product.id), 0);
-  newProduct.id = maxId + 1;
-
-  // Creation date
-  newProduct.createdAt = new Date().toISOString();
-
-  products.push(newProduct);
-
-  res.status(201).json({
-    message: "Product added successfully",
-    product: newProduct,
-  });
 }
 
 // Update whole product (PUT)
