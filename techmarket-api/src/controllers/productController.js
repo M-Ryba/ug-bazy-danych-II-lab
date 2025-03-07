@@ -79,6 +79,7 @@ const updateProduct = (req, res, next) => {
   }
 };
 
+// Update product partially (PATCH)
 const patchProduct = (req, res, next) => {
   try {
     const productId = parseInt(req.params.id);
