@@ -1,18 +1,20 @@
-const errorMiddleware = (err, req, res, next) => {
-  console.error("Error:", err.message);
+const { ValidationError, NotFoundError } = require("../errors/errors");
 
-  // Known error
-  if (err.name === "ValidationError") {
+const errorMiddleware = (err, req, res, next) => {
+  if (err instanceof ValidationError) {
     return res.status(400).json({
-      message: "Data validation error has ocurred!",
-      error: err.message,
+      message: err.message,
     });
   }
 
+  if (err instanceof NotFoundError) {
+    return res.status(404).json({
+      message: err.message,
+    });
+  }
   // Default error
   res.status(500).json({
-    message: "Server-side error has occured!",
-    error: err.message,
+    message: "Internal server error",
   });
 };
 
