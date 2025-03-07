@@ -30,8 +30,14 @@ function createProduct(req, res, next) {
   try {
     const newProduct = req.body;
 
+    // Validate required fields
     if (!newProduct.name || !newProduct.price || !newProduct.category) {
       throw new ValidationError("Name, price or category not specified");
+    }
+
+    // Validate price is a positive number
+    if (typeof newProduct.price !== "number" || newProduct.price <= 0) {
+      throw new ValidationError("Price must be a positive number");
     }
 
     // New ID (biggest ID + 1)
@@ -46,8 +52,8 @@ function createProduct(req, res, next) {
 
     products.push(newProduct);
 
-    res.status(201).json({
-      message: "Product added successfully",
+    res.status(200).json({
+      message: "Product updated successfully",
       product: newProduct,
     });
   } catch (error) {
@@ -60,15 +66,33 @@ const updateProduct = (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const updatedProduct = req.body;
+
+    if (
+      !updatedProduct.name ||
+      !updatedProduct.price ||
+      !updatedProduct.category
+    ) {
+      throw new ValidationError("Name, price and category are required");
+    }
+
+    if (typeof updatedProduct.price !== "number" || updatedProduct.price <= 0) {
+      throw new ValidationError("Price must be a positive number");
+    }
+
     const productIndex = products.findIndex((p) => p.id === id);
 
     if (productIndex === -1) {
       throw new NotFoundError("Product not found");
     }
 
-    // Ignore id given in JSON body
-    updatedProduct.id = products[productIndex].id;
-    products[productIndex] = updatedProduct;
+    // Preserve original ID and creation date
+    const originalProduct = products[productIndex];
+    products[productIndex] = {
+      ...updatedProduct,
+      id: originalProduct.id,
+      createdAt: originalProduct.createdAt,
+      updatedAt: new Date().toISOString(),
+    };
 
     res.status(200).json({
       message: "Product updated successfully",
@@ -84,6 +108,14 @@ const patchProduct = (req, res, next) => {
   try {
     const productId = parseInt(req.params.id);
     const updates = req.body;
+
+    if (
+      updates.price !== undefined &&
+      (typeof updates.price !== "number" || updates.price <= 0)
+    ) {
+      throw new ValidationError("Price must be a positive number");
+    }
+
     const productIndex = products.findIndex((p) => p.id === productId);
 
     if (productIndex === -1) {
