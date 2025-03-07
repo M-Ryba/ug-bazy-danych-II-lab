@@ -1,4 +1,4 @@
-const { ValidationError, NotFoundError } = require("../errors/errors");
+const { ValidationError, NotFoundError } = require("../utils/errors");
 
 const errorMiddleware = (err, req, res, next) => {
   if (err instanceof ValidationError) {
