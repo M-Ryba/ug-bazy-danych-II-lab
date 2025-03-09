@@ -2,7 +2,7 @@
     "clientName": "Thunder Client",
     "collectionName": "TechMarket",
     "collectionId": "998183bf-3daa-4850-b8b1-ab185d58e0ba",
-    "dateExported": "2025-03-05T13:02:23.037Z",
+    "dateExported": "2025-03-09T13:45:32.209Z",
     "version": "1.2",
     "folders": [],
     "requests": [
@@ -47,29 +47,12 @@
             "colId": "998183bf-3daa-4850-b8b1-ab185d58e0ba",
             "containerId": "",
             "name": "Get product (id = 1)",
-            "url": "http://localhost:8081/api/products/1",
+            "url": "http://localhost:8081/api/products/",
             "method": "GET",
             "sortNum": 40000,
             "created": "2025-03-05T12:05:13.447Z",
-            "modified": "2025-03-05T12:08:42.218Z",
+            "modified": "2025-03-06T13:36:45.308Z",
             "headers": []
-        },
-        {
-            "_id": "02128746-8158-4310-b301-f880e9fd795f",
-            "colId": "998183bf-3daa-4850-b8b1-ab185d58e0ba",
-            "containerId": "",
-            "name": "Add product",
-            "url": "http://localhost:8081/api/products",
-            "method": "POST",
-            "sortNum": 50000,
-            "created": "2025-03-05T12:05:25.282Z",
-            "modified": "2025-03-05T12:35:04.254Z",
-            "headers": [],
-            "body": {
-                "type": "json",
-                "raw": "{\n   \"name\": \"Ładowarka Anker C20 45W\",\n   \"price\": 15.99,\n   \"description\": \"Ładowarka PD o mocy 45W\",\n   \"category\": \"Ładowarki\"\n}",
-                "form": []
-            }
         },
         {
             "_id": "e0191144-f8c3-4f0a-8b18-1a9774f90c45",
@@ -116,7 +99,58 @@
                 "raw": "  {\n    \"price\": 600\n  }\n  ",
                 "form": []
             }
+        },
+        {
+            "_id": "02128746-8158-4310-b301-f880e9fd795f",
+            "colId": "998183bf-3daa-4850-b8b1-ab185d58e0ba",
+            "containerId": "",
+            "name": "Create product",
+            "url": "http://localhost:8081/api/products",
+            "method": "POST",
+            "sortNum": 75000,
+            "created": "2025-03-05T12:05:25.282Z",
+            "modified": "2025-03-05T12:35:04.254Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n   \"name\": \"Ładowarka Anker C20 45W\",\n   \"price\": 15.99,\n   \"description\": \"Ładowarka PD o mocy 45W\",\n   \"category\": \"Ładowarki\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "065cb992-5413-42db-abf1-02524a18aa2d",
+            "colId": "998183bf-3daa-4850-b8b1-ab185d58e0ba",
+            "containerId": "",
+            "name": "createProduct empty Body",
+            "url": "http://localhost:8081/api/products",
+            "method": "POST",
+            "sortNum": 80000,
+            "created": "2025-03-06T13:24:20.936Z",
+            "modified": "2025-03-06T13:24:50.167Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{}",
+                "form": []
+            }
+        },
+        {
+            "_id": "02ee563c-3471-4e84-8503-a105c90970c9",
+            "colId": "998183bf-3daa-4850-b8b1-ab185d58e0ba",
+            "containerId": "",
+            "name": "createProduct negative price",
+            "url": "http://localhost:8081/api/products",
+            "method": "POST",
+            "sortNum": 90000,
+            "created": "2025-03-07T12:21:03.919Z",
+            "modified": "2025-03-07T12:26:34.947Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n   \"name\": \"Ładowarka Anker C20 45W\",\n   \"price\": -15.99,\n   \"description\": \"Ładowarka PD o mocy 45W\",\n   \"category\": \"Ładowarki\"\n}",
+                "form": []
+            }
         }
     ],
-    "ref": "ga9jJkJ5k5YKEjOydcnj5uOdz1j0Dj1vaJwIk7EmGBLe4RAiEIux5JWqqe3juVdfuMQtnV9N9Gf-E7msYhgiKQ"
+    "ref": "ga9jJkJ5k5YKEjOydcnj5oVyg0FmzDV5eLQztp9rTWlCRJE_pR2fBQUK03zieACaZ-R3C5WcI820EnmkpL1Pag"
 }
