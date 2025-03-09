@@ -14,7 +14,6 @@ app.use(cors());
 app.use(morgan("dev")); // HTTP request logging
 app.use(express.json()); // JSON parsing
 app.use(express.urlencoded({ extended: true })); // form data parsing
-app.use(errorMiddleware);
 
 // Routing
 app.use("/api/products", productRoutes);
@@ -26,6 +25,8 @@ app.get("/", (req, res) => {
 app.get("/api", (req, res) => {
   res.send("You are using TechMarket API");
 });
+
+app.use(errorMiddleware);
 
 const server = app.listen(process.env.PORT, () => {
   const host = server.address().address;
