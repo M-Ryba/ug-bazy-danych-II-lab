@@ -3,10 +3,10 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-
 const errorMiddleware = require("./src/middleware/errorMiddleware");
 
 const productRoutes = require("./src/routes/productRoutes");
+const { initDb } = require("./src/config/db");
 
 const app = express();
 
@@ -28,8 +28,15 @@ app.get("/api", (req, res) => {
 
 app.use(errorMiddleware);
 
-const server = app.listen(process.env.PORT, () => {
-  const host = server.address().address;
-  const port = server.address().port;
-  console.log(`Server is listening at http://${host}:${port}`);
-});
+initDb()
+  .then(() => {
+    console.log("Database initialized");
+    const server = app.listen(process.env.PORT, () => {
+      const host = server.address().address;
+      const port = server.address().port;
+      console.log(`Server is listening at http://${host}:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to initialize the database:", err);
+  });
