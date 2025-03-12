@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS products (
     brand VARCHAR(50),
     image_url VARCHAR(999),
     is_available BOOLEAN,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT price CHECK (price > 0),
+    CONSTRAINT stock_count CHECK (stock_count >= 0)
 );
 
 INSERT INTO products (name, category, description, price, stock_count, brand, image_url, is_available) VALUES
