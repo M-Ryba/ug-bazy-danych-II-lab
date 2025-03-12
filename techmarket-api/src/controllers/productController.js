@@ -28,7 +28,7 @@ async function getProductById(req, res, next) {
 }
 
 // Create product (POST)
-function createProduct(req, res, next) {
+async function createProduct(req, res, next) {
   try {
     const newProduct = req.body;
 
@@ -42,21 +42,11 @@ function createProduct(req, res, next) {
       throw new ValidationError("Price must be a positive number");
     }
 
-    // New ID (biggest ID + 1)
-    const maxId = products.reduce(
-      (max, product) => Math.max(max, product.id),
-      0
-    );
-    newProduct.id = maxId + 1;
+    const createdProduct = await ProductDB.create(newProduct);
 
-    // Creation date
-    newProduct.createdAt = new Date().toISOString();
-
-    products.push(newProduct);
-
-    res.status(200).json({
-      message: "Product updated successfully",
-      product: newProduct,
+    res.status(201).json({
+      message: "Product created successfully",
+      product: createdProduct,
     });
   } catch (error) {
     next(error);
@@ -64,9 +54,9 @@ function createProduct(req, res, next) {
 }
 
 // Update product (PATCH)
-const patchProduct = (req, res, next) => {
+async function updateProduct(req, res, next) {
   try {
-    const productId = parseInt(req.params.id);
+    const id = parseInt(req.params.id);
     const updates = req.body;
 
     if (
@@ -76,20 +66,11 @@ const patchProduct = (req, res, next) => {
       throw new ValidationError("Price must be a positive number");
     }
 
-    const productIndex = products.findIndex((p) => p.id === productId);
+    const updatedProduct = await ProductDB.update(id, updates);
 
-    if (productIndex === -1) {
+    if (!updatedProduct) {
       throw new NotFoundError("Product not found");
     }
-
-    // Only update specified properties
-    const updatedProduct = {
-      ...products[productIndex],
-      ...updates,
-      id: products[productIndex].id, // Preserve original ID
-    };
-
-    products[productIndex] = updatedProduct;
 
     res.status(200).json({
       message: "Product updated successfully",
@@ -98,20 +79,17 @@ const patchProduct = (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Delete product (DELETE)
-const deleteProduct = (req, res, next) => {
+async function deleteProduct(req, res, next) {
   try {
     const id = parseInt(req.params.id);
-    const productIndex = products.findIndex((p) => p.id === id);
+    const deletedProduct = await ProductDB.delete(id);
 
-    if (productIndex === -1) {
+    if (!deletedProduct) {
       throw new NotFoundError("Product not found");
     }
-
-    const deletedProduct = products[productIndex];
-    products.splice(productIndex, 1);
 
     res.status(200).json({
       message: "Product deleted successfully",
@@ -120,11 +98,12 @@ const deleteProduct = (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
+  updateProduct,
   deleteProduct,
 };

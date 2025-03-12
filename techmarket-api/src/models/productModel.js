@@ -19,30 +19,55 @@ const ProductDB = {
   // Create new product
   create: async (product) => {
     const { rows } = await pool.query(
-      "INSERT INTO products (name, price, category) VALUES ($1, $2, $3) RETURNING *;",
-      [product.name, product.price, product.category]
+      `INSERT INTO products (
+        name, category, description, price,
+        stock_count, brand, image_url, is_available
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *;`,
+      [
+        product.name,
+        product.category,
+        product.description,
+        product.price,
+        product.stock_count,
+        product.brand,
+        product.image_url,
+        product.is_available,
+      ]
     );
     return rows[0];
   },
   // Update product
-  patch: async (id, updates) => {
-    // Dynamically build the update query
+  update: async (id, updates) => {
+    const allowedFields = [
+      "name",
+      "category",
+      "description",
+      "price",
+      "stock_count",
+      "brand",
+      "image_url",
+      "is_available",
+    ];
+
     const setColumns = [];
     const values = [];
     let paramCount = 1;
 
     Object.keys(updates).forEach((key) => {
-      if (key !== "id" && key !== "created_at") {
+      if (allowedFields.includes(key)) {
         setColumns.push(`${key} = $${paramCount}`);
         values.push(updates[key]);
         paramCount++;
       }
     });
 
+    if (setColumns.length === 0) return null;
+
     values.push(id);
     const query = `
       UPDATE products
-      SET ${setColumns.join(", ")}, updated_at = CURRENT_TIMESTAMP
+      SET ${setColumns.join(", ")}
       WHERE product_id = $${paramCount}
       RETURNING *;
     `;

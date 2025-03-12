@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS products (
     name VARCHAR(50) UNIQUE NOT NULL,
     category VARCHAR(50) NOT NULL,
     description VARCHAR(999),
-    price: INTEGER NOT NULL,
+    price NUMERIC NOT NULL,
     stock_count INTEGER NOT NULL,
     brand VARCHAR(50) NOT NULL,
     image_url VARCHAR(999),

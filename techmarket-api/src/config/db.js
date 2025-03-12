@@ -18,9 +18,10 @@ const initDb = async () => {
     .toString();
   try {
     await pool.query(initScript);
-    console.log("Baza danych została zainicjalizowana.");
+    console.log("Database has been initialized");
   } catch (err) {
-    console.error("Błąd inicjalizacji bazy danych:", err);
+    console.error("Database initialization error:", err);
+    process.exit(1);
   }
 };
 
