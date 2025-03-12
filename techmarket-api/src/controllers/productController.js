@@ -1,10 +1,47 @@
-const { ValidationError, NotFoundError, DatabaseError, DuplicateError } = require("../utils/errors");
+const { ValidationError, NotFoundError, DuplicateError } = require("../utils/errors");
 const ProductDB = require("../models/productModel");
 
 // Get all products (GET)
 async function getAllProducts(req, res, next) {
   try {
-    const products = await ProductDB.getAll();
+    const { sort, available, minPrice, maxPrice, brand, category, namePattern } = req.query;
+
+    // Validate sort parameter
+    if (sort && !["price_asc", "price_desc"].includes(sort)) {
+      throw new ValidationError("Invalid sort parameter. Use 'price_asc' or 'price_desc'");
+    }
+
+    // Validate available parameter
+    if (available && !["true", "false"].includes(available)) {
+      throw new ValidationError("Invalid available parameter. Use 'true' or 'false'");
+    }
+
+    // Validate price range
+    if (minPrice && isNaN(minPrice)) {
+      throw new ValidationError("minPrice must be a number");
+    }
+    if (maxPrice && isNaN(maxPrice)) {
+      throw new ValidationError("maxPrice must be a number");
+    }
+    if (minPrice && maxPrice && parseFloat(minPrice) > parseFloat(maxPrice)) {
+      throw new ValidationError("minPrice cannot be greater than maxPrice");
+    }
+
+    // Validate namePattern
+    if (namePattern && typeof namePattern !== "string") {
+      throw new ValidationError("namePattern must be a string");
+    }
+
+    const products = await ProductDB.search({
+      sort,
+      available,
+      minPrice,
+      maxPrice,
+      brand,
+      category,
+      namePattern,
+    });
+
     res.status(200).json(products);
   } catch (error) {
     next(error);
@@ -65,6 +102,11 @@ async function createProduct(req, res, next) {
       throw new ValidationError("Image URL must be a string with maximum length of 999 characters");
     }
 
+    const existingProduct = await ProductDB.search({ name: newProduct.name });
+    if (existingProduct) {
+      throw new DuplicateError(`Product with name '${newProduct.name}' already exists`);
+    }
+
     const createdProduct = await ProductDB.create(newProduct);
 
     res.status(201).json({
@@ -72,11 +114,6 @@ async function createProduct(req, res, next) {
       product: createdProduct,
     });
   } catch (error) {
-    if (error instanceof DuplicateError) {
-      error.status = 409;
-    } else if (error instanceof DatabaseError) {
-      error.status = 503;
-    }
     next(error);
   }
 }
@@ -113,6 +150,13 @@ async function updateProduct(req, res, next) {
       throw new ValidationError("Image URL must be a string with maximum length of 999 characters");
     }
 
+    if (updates.name) {
+      const existingProduct = await ProductDB.search({ name: updates.name });
+      if (existingProduct && existingProduct.product_id !== id) {
+        throw new DuplicateError(`Product with name '${updates.name}' already exists`);
+      }
+    }
+
     const updatedProduct = await ProductDB.update(id, updates);
 
     if (!updatedProduct) {
@@ -124,11 +168,6 @@ async function updateProduct(req, res, next) {
       product: updatedProduct,
     });
   } catch (error) {
-    if (error instanceof DuplicateError) {
-      error.status = 409;
-    } else if (error instanceof DatabaseError) {
-      error.status = 503;
-    }
     next(error);
   }
 }

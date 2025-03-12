@@ -10,12 +10,6 @@ class NotFoundError extends Error {
   }
 }
 
-class DatabaseError extends Error {
-  constructor(message = "Database error has occurred") {
-    super(message);
-  }
-}
-
 class DuplicateError extends Error {
   constructor(message = "Resource already exists") {
     super(message);
@@ -25,6 +19,5 @@ class DuplicateError extends Error {
 module.exports = {
   ValidationError,
   NotFoundError,
-  DatabaseError,
   DuplicateError,
 };
