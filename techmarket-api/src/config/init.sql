@@ -1,11 +1,18 @@
-CREATE TABLE IF NOT EXISTS users (
-    user_id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+CREATE TABLE IF NOT EXISTS products (
+    product_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    category VARCHAR(50),
+    description VARCHAR(999),
+    price: INTEGER,
+    stock_count INTEGER,
+    brand VARCHAR(50),
+    image_url VARCHAR(999),
+    is_available BOOLEAN,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO users (username, email) VALUES
-('adam123', 'adam@example.com'),
-('ewa', 'ewa@example.com')
+INSERT INTO products (name, category, description, price, stock_count, brand, image_url, is_available) VALUES
+('MacBook Pro 16', 'Laptopy', 'Laptop Apple z procesorem M1 Pro, 16GB RAM, 512GB SSD', '9999.99', '15', 'Apple', 'https://example.com/macbook.jpg', 'true'),
+('iPhone 15', 'Smartfony', 'Smartfon Apple z ekranem 6.1", 128GB pamięci', '699.99', '34', 'Apple', 'https://example.com/iphone15.jpg', 'true'),
+('Kabel HDMI 1,5 m', 'Przewody', 'Kabel HDMI - HDMI o długości 1,5 w standardzie 2.0', '9.99', '15', 'Goldenline', 'https://example.com/hdmi.jpg', 'true')
 ON CONFLICT DO NOTHING;
