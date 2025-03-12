@@ -3,7 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const errorMiddleware = require("./src/middleware/errorMiddleware");
+const errorHandler = require("./src/middleware/errorMiddleware");
+const notFoundHandler = require("./src/middleware/notFoundMiddleware");
 
 const productRoutes = require("./src/routes/productRoutes");
 const { initDb } = require("./src/config/db");
@@ -26,7 +27,8 @@ app.get("/api", (req, res) => {
   res.send("You are using TechMarket API");
 });
 
-app.use(errorMiddleware);
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 initDb()
   .then(() => {

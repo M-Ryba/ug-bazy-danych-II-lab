@@ -1,31 +1,33 @@
-const { products } = require("../data/products.js");
 const { ValidationError, NotFoundError } = require("../utils/errors");
+const ProductDB = require("../models/productModel");
 
-// Get all products
-function getAllProducts(req, res, next) {
+// Get all products (GET)
+async function getAllProducts(req, res, next) {
   try {
+    const products = await ProductDB.getAll();
     res.status(200).json(products);
   } catch (error) {
     next(error);
   }
 }
 
-// Get product by ID
-function getProductById(req, res, next) {
+// Get product by ID (GET)
+async function getProductById(req, res, next) {
   try {
     const id = parseInt(req.params.id);
-    const product = products.find((p) => p.id === id);
+    const product = await ProductDB.getById(id);
 
     if (!product) {
       throw new NotFoundError("Product not found");
     }
+
     res.status(200).json(product);
   } catch (error) {
     next(error);
   }
 }
 
-// Create product
+// Create product (POST)
 function createProduct(req, res, next) {
   try {
     const newProduct = req.body;
@@ -61,49 +63,7 @@ function createProduct(req, res, next) {
   }
 }
 
-// Update whole product (PUT)
-const updateProduct = (req, res, next) => {
-  try {
-    const id = parseInt(req.params.id);
-    const updatedProduct = req.body;
-
-    if (
-      !updatedProduct.name ||
-      !updatedProduct.price ||
-      !updatedProduct.category
-    ) {
-      throw new ValidationError("Name, price and category are required");
-    }
-
-    if (typeof updatedProduct.price !== "number" || updatedProduct.price <= 0) {
-      throw new ValidationError("Price must be a positive number");
-    }
-
-    const productIndex = products.findIndex((p) => p.id === id);
-
-    if (productIndex === -1) {
-      throw new NotFoundError("Product not found");
-    }
-
-    // Preserve original ID and creation date
-    const originalProduct = products[productIndex];
-    products[productIndex] = {
-      ...updatedProduct,
-      id: originalProduct.id,
-      createdAt: originalProduct.createdAt,
-      updatedAt: new Date().toISOString(),
-    };
-
-    res.status(200).json({
-      message: "Product updated successfully",
-      product: updatedProduct,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Update product partially (PATCH)
+// Update product (PATCH)
 const patchProduct = (req, res, next) => {
   try {
     const productId = parseInt(req.params.id);
@@ -140,7 +100,7 @@ const patchProduct = (req, res, next) => {
   }
 };
 
-// Delete product
+// Delete product (DELETE)
 const deleteProduct = (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
@@ -166,7 +126,5 @@ module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
-  updateProduct,
-  patchProduct,
   deleteProduct,
 };
