@@ -11,7 +11,11 @@ const { initDb } = require("./src/config/db");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(morgan("dev")); // HTTP request logging
 app.use(express.json()); // JSON parsing
 app.use(express.urlencoded({ extended: true })); // form data parsing
