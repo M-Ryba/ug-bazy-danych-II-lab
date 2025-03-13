@@ -1,6 +1,8 @@
 const { ValidationError, NotFoundError, DuplicateError } = require("../utils/errors");
 
 const errorHandler = (err, req, res, next) => {
+  console.error(err); // Log the error for debugging
+
   if (err instanceof ValidationError) {
     return res.status(400).json({
       message: err.message,
@@ -19,15 +21,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Database unique violation
-  if (err.code === "23505") {
-    return res.status(409).json({
-      message: "A product with this name already exists",
-    });
-  }
-
   // Default error
-  console.error(err); // Log the error for debugging
   res.status(500).json({
     message: "Internal server error",
   });
