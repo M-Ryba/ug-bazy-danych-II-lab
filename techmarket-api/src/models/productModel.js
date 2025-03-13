@@ -105,7 +105,7 @@ const ProductDB = {
       query += " WHERE " + conditions.join(" AND ");
     }
 
-    // Add sorting
+    // Sorting
     if (params.sort === "price_asc") {
       query += " ORDER BY price ASC";
     } else if (params.sort === "price_desc") {
@@ -115,7 +115,7 @@ const ProductDB = {
     }
 
     const { rows } = await pool.query(query, values);
-    return params.name ? rows[0] : rows; // Return single object for name search
+    return params.name ? rows[0] : rows; // Return single product for name search
   },
 };
 
