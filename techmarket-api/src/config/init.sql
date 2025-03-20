@@ -1,3 +1,11 @@
+-- Create categories table
+CREATE TABLE IF NOT EXISTS categories (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    description VARCHAR(255)
+);
+
+-- Create products table (references categories)
 CREATE TABLE IF NOT EXISTS products (
     product_id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL,
@@ -9,16 +17,13 @@ CREATE TABLE IF NOT EXISTS products (
     image_url VARCHAR(999),
     is_available BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    category_id INTEGER,
     CONSTRAINT price CHECK (price > 0),
-    CONSTRAINT stock_count CHECK (stock_count >= 0)
+    CONSTRAINT stock_count CHECK (stock_count >= 0),
+    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
 
-CREATE TABLE IF NOT EXISTS categories (
-    category_id SERIAL PRIMARY KEY,
-    name VARCHAR(50) UNIQUE NOT NULL,
-    description VARCHAR(255)
-);
-
+-- Create users table
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -28,6 +33,7 @@ CREATE TABLE IF NOT EXISTS users (
     last_name VARCHAR(50)
 );
 
+-- Create reviews table (references products and users)
 CREATE TABLE IF NOT EXISTS reviews (
     review_id SERIAL PRIMARY KEY,
     product_id INTEGER NOT NULL,
@@ -39,15 +45,12 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-ALTER TABLE products
-ADD COLUMN category_id INTEGER,
-ADD CONSTRAINT fk_category
-FOREIGN KEY (category_id) REFERENCES categories(category_id);
-
+-- Insert sample data
 INSERT INTO categories (name, description) VALUES
 ('Laptopy', 'Laptopy i notebooki'),
 ('Smartfony', 'Telefony komórkowe i smartfony'),
-('Przewody', 'Kable i przewody');
+('Przewody', 'Kable i przewody')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO products (name, category, description, price, stock_count, brand, image_url, is_available, category_id) VALUES
 ('MacBook Pro 16', 'Laptopy', 'Laptop Apple z procesorem M1 Pro, 16GB RAM, 512GB SSD', '9999.99', '15', 'Apple', 'https://example.com/macbook.jpg', 'true', 1),
@@ -57,9 +60,11 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO users (username, email, password_hash, first_name, last_name) VALUES
 ('adam1', 'adm1@example.com', '1234#', 'Adam', 'Kowalski'),
-('natif', 'natif@example.com', 'zaq1@WSX', 'Natalia', 'Kowal');
+('natif', 'natif@example.com', 'zaq1@WSX', 'Natalia', 'Kowal')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO reviews (product_id, user_id, rating, comment) VALUES
 (1, 1, 5, 'Doskonały laptop, bardzo szybki i niezawodny.'),
 (2, 2, 4, 'Świetny telefon, ale trochę drogi.'),
-(3, 1, 3, 'Dobry kabel, ale mógłby być dłuższy.');
+(3, 1, 3, 'Dobry kabel, ale mógłby być dłuższy.')
+ON CONFLICT DO NOTHING;
