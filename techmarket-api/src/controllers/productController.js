@@ -1,10 +1,11 @@
 const { ValidationError, NotFoundError, DuplicateError } = require("../utils/errors");
 const ProductDB = require("../models/productModel");
+const CategoryDB = require("../models/categoryModel");
 
 // Get all products (GET)
 async function getAllProducts(req, res, next) {
   try {
-    const { sort, available, minPrice, maxPrice, brand, category, namePattern } = req.query;
+    const { sort, available, minPrice, maxPrice, brand, category, namePattern, category_id } = req.query;
 
     // Validate sort parameter
     if (sort && !["price_asc", "price_desc"].includes(sort)) {
@@ -32,6 +33,11 @@ async function getAllProducts(req, res, next) {
       throw new ValidationError("namePattern must be a string");
     }
 
+    // Validate category_id parameter
+    if (category_id && (!Number.isInteger(parseInt(category_id)) || parseInt(category_id) <= 0)) {
+      throw new ValidationError("category_id must be a positive integer");
+    }
+
     const products = await ProductDB.search({
       sort,
       available,
@@ -40,6 +46,7 @@ async function getAllProducts(req, res, next) {
       brand,
       category,
       namePattern,
+      category_id,
     });
 
     res.status(200).json(products);
@@ -59,6 +66,22 @@ async function getProductById(req, res, next) {
     }
 
     res.status(200).json(product);
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Get product with reviews (GET)
+async function getProductWithReviews(req, res, next) {
+  try {
+    const id = parseInt(req.params.id);
+    const productWithReviews = await ProductDB.getWithReviews(id);
+
+    if (!productWithReviews) {
+      throw new NotFoundError("Product not found");
+    }
+
+    res.status(200).json(productWithReviews);
   } catch (error) {
     next(error);
   }
@@ -100,6 +123,19 @@ async function createProduct(req, res, next) {
     }
     if (newProduct.image_url && (typeof newProduct.image_url !== "string" || newProduct.image_url.length > 999)) {
       throw new ValidationError("Image URL must be a string with maximum length of 999 characters");
+    }
+
+    // Validate category_id if provided
+    if (newProduct.category_id !== undefined) {
+      if (!Number.isInteger(newProduct.category_id) || newProduct.category_id <= 0) {
+        throw new ValidationError("category_id must be a positive integer");
+      }
+
+      // Check if category exists
+      const category = await CategoryDB.getById(newProduct.category_id);
+      if (!category) {
+        throw new ValidationError(`Category with ID ${newProduct.category_id} does not exist`);
+      }
     }
 
     const existingProduct = await ProductDB.search({ name: newProduct.name });
@@ -150,6 +186,19 @@ async function updateProduct(req, res, next) {
       throw new ValidationError("Image URL must be a string with maximum length of 999 characters");
     }
 
+    // Validate category_id if provided
+    if (updates.category_id !== undefined) {
+      if (!Number.isInteger(updates.category_id) || updates.category_id <= 0) {
+        throw new ValidationError("category_id must be a positive integer");
+      }
+
+      // Check if category exists
+      const category = await CategoryDB.getById(updates.category_id);
+      if (!category) {
+        throw new ValidationError(`Category with ID ${updates.category_id} does not exist`);
+      }
+    }
+
     if (updates.name) {
       const existingProduct = await ProductDB.search({ name: updates.name });
       if (existingProduct && existingProduct.product_id !== id) {
@@ -194,6 +243,7 @@ async function deleteProduct(req, res, next) {
 module.exports = {
   getAllProducts,
   getProductById,
+  getProductWithReviews,
   createProduct,
   updateProduct,
   deleteProduct,

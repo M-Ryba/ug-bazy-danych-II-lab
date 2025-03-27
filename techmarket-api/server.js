@@ -7,6 +7,9 @@ const errorHandler = require("./src/middleware/errorMiddleware");
 const notFoundHandler = require("./src/middleware/notFoundMiddleware");
 
 const productRoutes = require("./src/routes/productRoutes");
+const categoryRoutes = require("./src/routes/categoryRoutes");
+const userRoutes = require("./src/routes/userRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
 const { initDb } = require("./src/config/db");
 
 const app = express();
@@ -22,6 +25,9 @@ app.use(express.urlencoded({ extended: true })); // form data parsing
 
 // Routing
 app.use("/api/products", productRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 app.get("/", (req, res) => {
   res.send("Please use /api route");

@@ -8,6 +8,9 @@ router.get("/", productController.getAllProducts);
 // GET /api/products/:id - download product by ID
 router.get("/:id", productController.getProductById);
 
+// GET /api/products/:id/reviews - get product with its reviews
+router.get("/:id/reviews", productController.getProductWithReviews);
+
 // POST /api/products - add new product
 router.post("/", productController.createProduct);
 
